@@ -1,0 +1,20 @@
+tools/
+gallery-template.html
+.openai/
+Thumbs.db
+.DS_Store
+
+# Superseded local images that are not referenced by the website.
+assets/images/work-academic.png
+assets/images/academic-aerial.png
+assets/images/realized-rear-entrance.png
+assets/images/academic-exterior.png
+assets/images/academic-threshold.png
+assets/images/academic-project-1.png
+assets/images/furniture-chair.jpg
+assets/images/academic-city-oasis.png
+assets/images/home-feature-realized.jpg
+assets/images/realized-interior.jpg
+assets/images/furniture-process.jpg
+assets/images/academic-model.jpg
+assets/images/studio-image.jpg
