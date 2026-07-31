@@ -74,6 +74,11 @@ h1, h2, h3, p { margin-top: 0; }
 }
 .image-cycle .cycle-frame.is-active { opacity: 1; }
 .project-card--academic .image-cycle img { object-fit: contain; }
+.project-card--directory .project-image { border: 1px solid #000; }
+.project-card--directory .project-image img {
+  object-fit: contain;
+  transform: scale(.88);
+}
 .gallery-page .project-image { background: #000; }
 .gallery-page .project-image img { object-fit: contain; }
 .project-card:hover .project-image img,
@@ -104,19 +109,19 @@ h1, h2, h3, p { margin-top: 0; }
 .work-heading .text-link { position: absolute; right: 0; bottom: 8px; }
 .work-categories { display: grid; grid-template-columns: repeat(4, 1fr); gap: 11px; }
 .category {
-  aspect-ratio: 1.06; display: grid; place-items: center; overflow: hidden;
+  position: relative; aspect-ratio: 1.06; display: grid; place-items: center; overflow: hidden;
+  background: #000; border: 1px solid #000;
   filter: saturate(.8); opacity: 0; transform: translateY(12px);
   transition: opacity .65s ease, transform .65s ease;
 }
 .category.is-visible { opacity: 1; transform: translateY(0); }
 .category img {
-  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain;
+  transform: scale(.88); filter: brightness(.62) saturate(.8);
   transition: filter .35s ease, transform .55s cubic-bezier(.2,.6,.3,1);
 }
-.category--contain { background: #000; }
 .category--contain img {
   object-fit: contain;
-  padding: clamp(14px, 1.8vw, 30px);
 }
 .category::before {
   content: ""; position: absolute; inset: 0; z-index: 1;
@@ -129,7 +134,7 @@ h1, h2, h3, p { margin-top: 0; }
   animation: film-grain .42s steps(2, end) infinite;
 }
 .category:hover::before, .category:focus-visible::before { background: rgba(0,0,0,.34); }
-.category:hover img, .category:focus-visible img { transform: scale(1.018); filter: contrast(1.04); }
+.category:hover img, .category:focus-visible img { transform: scale(1); filter: brightness(1) saturate(1) contrast(1.04); }
 .category:hover::after, .category:focus-visible::after { opacity: .3; }
 .category span { color: #fff; font-weight: 700; font-size: clamp(18px,1.75vw,27px); position: relative; z-index: 3; }
 
@@ -444,5 +449,5 @@ h1, h2, h3, p { margin-top: 0; }
   .project-browser:hover .project-preview-main,
   .project-browser:hover .project-preview-thumb { opacity: 1; }
   .category:hover::before { background: rgba(0,0,0,.07); }
-  .category:hover img { transform: none; filter: none; }
+  .category:hover img { transform: scale(.88); filter: brightness(.62) saturate(.8); }
 }
