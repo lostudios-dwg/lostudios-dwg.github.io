@@ -1,3 +1,24 @@
+const themeQuery = new URLSearchParams(window.location.search).get("theme");
+const isGraphiteTheme = document.body.classList.contains("theme-graphite") || themeQuery === "graphite";
+
+if (isGraphiteTheme) {
+  document.body.classList.add("theme-graphite");
+  document.documentElement.classList.add("theme-graphite-root");
+
+  const comparison = document.createElement("nav");
+  comparison.className = "theme-compare";
+  comparison.setAttribute("aria-label", "Compare website designs");
+  const originalPath = window.location.pathname.endsWith("/concept.html")
+    ? "index.html"
+    : `${window.location.pathname.split("/").pop() || "index.html"}`;
+  comparison.innerHTML = `
+    <a href="${originalPath}" data-theme-original>Original</a>
+    <span aria-hidden="true">/</span>
+    <a class="is-active" href="concept.html">Graphite</a>
+  `;
+  document.body.appendChild(comparison);
+}
+
 const menuButton = document.querySelector(".menu-button");
 
 const revealPage = () => {
@@ -20,6 +41,9 @@ document.addEventListener("click", (event) => {
   if (link.target === "_blank" || link.hasAttribute("download")) return;
 
   const destination = new URL(link.href, window.location.href);
+  if (isGraphiteTheme && destination.origin === window.location.origin && !link.hasAttribute("data-theme-original")) {
+    destination.searchParams.set("theme", "graphite");
+  }
   if (destination.origin !== window.location.origin || destination.pathname === window.location.pathname) return;
 
   event.preventDefault();
@@ -42,11 +66,13 @@ const homePanels = document.querySelectorAll(".home-page .home-hero, .home-page 
 
 if (homePanels.length) {
   if ("IntersectionObserver" in window && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    const panelObserver = new IntersectionObserver((entries) => {
+    const panelObserver = new IntersectionObserver((entries, observer) => {
       entries.forEach((entry) => {
-        entry.target.classList.toggle("is-in-view", entry.isIntersecting);
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add("is-in-view");
+        observer.unobserve(entry.target);
       });
-    }, { threshold: 0.16, rootMargin: "-8% 0px -8%" });
+    }, { threshold: 0.1, rootMargin: "0px 0px -5%" });
     homePanels.forEach((panel) => panelObserver.observe(panel));
   } else {
     homePanels.forEach((panel) => panel.classList.add("is-in-view"));
