@@ -235,23 +235,25 @@ imageCycles.forEach((cycle, cycleIndex) => {
   }, 2800 + cycleIndex * 650);
 });
 
-const projectGallery = document.querySelector(".project-gallery");
+const projectGalleries = [...document.querySelectorAll(".project-gallery")];
 
-if (projectGallery) {
+projectGalleries.forEach((projectGallery) => {
   const galleryImages = [...projectGallery.querySelectorAll(".project-gallery-item img")];
-  const lightboxImages = galleryImages.slice(1);
+  const isStageGallery = projectGallery.classList.contains("project-gallery--stage");
+  const isModelStudy = Boolean(projectGallery.closest(".model-study"));
+  const lightboxImages = isStageGallery ? galleryImages : galleryImages.slice(1);
 
   if (lightboxImages.length) {
     const previewFigure = lightboxImages[0].closest(".project-gallery-item");
     previewFigure.classList.add("project-preview-main");
-    galleryImages.slice(2).forEach((image) => {
+    lightboxImages.slice(1).forEach((image) => {
       image.closest(".project-gallery-item").classList.add("is-gallery-hidden");
     });
     const moreButton = document.createElement("button");
-    moreButton.className = "project-more";
+    moreButton.className = `project-more${isModelStudy ? " project-more--wordless" : ""}`;
     moreButton.type = "button";
     moreButton.setAttribute("aria-label", "Open the complete project gallery");
-    moreButton.textContent = "more...";
+    moreButton.textContent = isModelStudy ? "" : "more...";
     previewFigure.appendChild(moreButton);
 
     const previewReel = document.createElement("div");
@@ -279,7 +281,8 @@ if (projectGallery) {
     });
     const projectBrowser = document.createElement("div");
     projectBrowser.className = "project-browser";
-    galleryImages[0].closest(".project-gallery-item").after(projectBrowser);
+    if (isStageGallery) projectGallery.appendChild(projectBrowser);
+    else galleryImages[0].closest(".project-gallery-item").after(projectBrowser);
     projectBrowser.append(previewFigure, previewReel);
 
     const previewThumbs = [...previewReel.querySelectorAll(".project-preview-thumb")];
@@ -559,4 +562,82 @@ if (projectGallery) {
       renderTransform();
     });
   }
-}
+});
+
+document.querySelectorAll(".assignment-two-poster").forEach((poster) => {
+  const toggle = poster.querySelector(".poster-inline-toggle");
+  const viewport = poster.querySelector(".poster-inline-viewport");
+  if (!toggle || !viewport) return;
+  let dragging = false;
+  let dragPointer = null;
+  let dragStartX = 0;
+  let dragStartY = 0;
+  let dragScrollLeft = 0;
+  let dragScrollTop = 0;
+  let dragMoved = false;
+  let suppressViewportClick = false;
+  const expandLabel = toggle.dataset.expandLabel || "Enlarge process poster";
+  const collapseLabel = toggle.dataset.collapseLabel || "Reduce process poster";
+
+  const setPosterExpanded = (expanded) => {
+    poster.classList.toggle("is-expanded", expanded);
+    toggle.setAttribute("aria-expanded", String(expanded));
+    const label = expanded ? collapseLabel : expandLabel;
+    toggle.setAttribute("aria-label", label);
+    toggle.title = label;
+    if (expanded) {
+      requestAnimationFrame(() => {
+        viewport.scrollLeft = Math.max(0, (viewport.scrollWidth - viewport.clientWidth) / 2);
+        viewport.scrollTop = 0;
+      });
+    }
+    if (!expanded) {
+      viewport.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+    }
+  };
+
+  toggle.addEventListener("click", () => {
+    setPosterExpanded(!poster.classList.contains("is-expanded"));
+  });
+
+  viewport.addEventListener("pointerdown", (event) => {
+    if (!poster.classList.contains("is-expanded") || event.pointerType !== "mouse" || event.button !== 0) return;
+    dragging = true;
+    dragPointer = event.pointerId;
+    dragStartX = event.clientX;
+    dragStartY = event.clientY;
+    dragScrollLeft = viewport.scrollLeft;
+    dragScrollTop = viewport.scrollTop;
+    dragMoved = false;
+    viewport.setPointerCapture(event.pointerId);
+    viewport.classList.add("is-dragging");
+    event.preventDefault();
+  });
+
+  viewport.addEventListener("pointermove", (event) => {
+    if (!dragging || event.pointerId !== dragPointer) return;
+    if (Math.hypot(event.clientX - dragStartX, event.clientY - dragStartY) > 5) dragMoved = true;
+    viewport.scrollLeft = dragScrollLeft - (event.clientX - dragStartX);
+    viewport.scrollTop = dragScrollTop - (event.clientY - dragStartY);
+  });
+
+  const finishPosterDrag = (event) => {
+    if (!dragging || event.pointerId !== dragPointer) return;
+    dragging = false;
+    dragPointer = null;
+    if (viewport.hasPointerCapture(event.pointerId)) viewport.releasePointerCapture(event.pointerId);
+    viewport.classList.remove("is-dragging");
+    suppressViewportClick = dragMoved;
+  };
+
+  viewport.addEventListener("pointerup", finishPosterDrag);
+  viewport.addEventListener("pointercancel", finishPosterDrag);
+  viewport.addEventListener("click", () => {
+    if (!poster.classList.contains("is-expanded")) return;
+    if (suppressViewportClick) {
+      suppressViewportClick = false;
+      return;
+    }
+    setPosterExpanded(false);
+  });
+});
