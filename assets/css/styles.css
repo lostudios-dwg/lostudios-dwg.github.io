@@ -224,10 +224,10 @@ h1, h2, h3, p { margin-top: 0; }
   width: min(100%, 900px); margin: 0;
   font-size: clamp(18px, 2vw, 28px); font-weight: 400; line-height: 1.28; letter-spacing: -.035em;
 }
-body.category-description-active .site-footer {
+body:not(.work-directory-page).category-description-active .site-footer {
   transform: translate3d(0, 100%, 0) !important; pointer-events: none;
 }
-body.category-description-active .footer-toggle { opacity: 0; visibility: hidden; }
+body:not(.work-directory-page).category-description-active .footer-toggle { opacity: 0; visibility: hidden; }
 
 @keyframes film-grain {
   0% { transform: translate3d(-4%, -7%, 0); }
@@ -260,6 +260,36 @@ body:not(.contact-page) .site-footer::before {
   background: var(--paper-translucent); border-top: 1px solid rgba(0,0,0,.12);
   -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
 }
+body.work-directory-page { padding-bottom: 34px; }
+body.work-directory-page .site-footer {
+  padding: 66px var(--gutter) 30px; pointer-events: auto;
+}
+body.work-directory-page .site-footer::before {
+  inset: 34px 0 0; background: var(--paper-translucent);
+  transition: background-color .9s cubic-bezier(.22,.65,.3,1), border-color .9s ease;
+}
+body.work-directory-page.category-description-active .site-footer::before {
+  background: rgba(0,0,0,.94); border-color: rgba(255,255,255,.18);
+}
+body.work-directory-page .site-footer > .footer-social,
+body.work-directory-page .site-footer > .footer-contact {
+  opacity: 1; transform: translate3d(0,0,0);
+  transition: opacity .48s ease, transform .65s cubic-bezier(.16,1,.3,1), color .6s ease;
+}
+body.work-directory-page.category-description-active .site-footer > .footer-social,
+body.work-directory-page.category-description-active .site-footer > .footer-contact {
+  opacity: 0; transform: translate3d(0,8px,0); pointer-events: none;
+}
+body.work-directory-page.category-description-active .footer-toggle { opacity: 0; pointer-events: none; }
+body.work-directory-page .work-description-panel {
+  position: absolute; inset: 34px 0 0; min-height: 0; padding: 28px var(--gutter) 26px;
+  grid-template-columns: minmax(120px,.23fr) minmax(0,1fr); align-items: center; gap: clamp(34px,6vw,90px);
+  color: #fff; background: transparent; border: 0;
+  transform: none; pointer-events: none;
+}
+body.work-directory-page .work-description-label { align-self: start; margin-top: 4px; }
+body.work-directory-page .work-description-copy { width: min(100%,760px); line-height: 1.34; }
+body.work-directory-page .footer-contact { text-align: right; }
 body:not(.contact-page) .site-footer:hover,
 body:not(.contact-page) .site-footer:focus-within,
 body:not(.contact-page) .site-footer.is-open { transform: translate3d(0, 0, 0); }
@@ -573,21 +603,20 @@ body:not(.contact-page) .site-footer.is-open { transform: translate3d(0, 0, 0); 
   .work-page { padding-top: 46px; padding-bottom: 132px; }
   .work-heading { margin: 10px 0 62px; }
   .work-heading .text-link { position: static; margin-top: 18px; }
-  .work-categories { grid-template-columns: 1fr; gap: 60px; }
+  .work-categories { grid-template-columns: 1fr; gap: 34px; }
   .category {
-    height: calc((100vw - (var(--gutter) * 2)) * .75 + 132px);
-    aspect-ratio: auto; overflow: hidden; background: transparent; border: 0;
+    height: auto; aspect-ratio: 4/3; overflow: hidden; background: #000; border: 1px solid #000;
   }
-  .category img { bottom: auto; height: calc(100% - 132px); background: #000; }
-  .category::before { bottom: 132px; }
+  .category img { bottom: 0; height: 100%; background: #000; }
+  .category::before { bottom: 0; }
   .category::after { display: none; }
-  .category span { position: absolute; left: 50%; top: calc((100% - 132px) / 2); transform: translate(-50%, -50%); }
-  .category-mobile-description {
-    display: block; position: absolute; z-index: 4; left: 0; right: 0; bottom: 0;
-    height: 132px; margin: 0; padding: 18px 0 0; color: var(--ink); background: var(--paper);
-    border-top: 1px solid rgba(0,0,0,.45); font-size: 13px; line-height: 1.55;
+  .category span { position: relative; left: auto; top: auto; transform: none; }
+  body.work-directory-page .work-description-panel {
+    display: grid; inset: 34px 0 0; padding: 22px var(--gutter) 20px;
+    grid-template-columns: 1fr; align-content: center; gap: 9px;
   }
-  .work-description-panel { display: none; }
+  body.work-directory-page .work-description-label { margin: 0; align-self: auto; }
+  body.work-directory-page .work-description-copy { font-size: 16px; line-height: 1.42; }
   body:not(.contact-page) .site-footer { bottom: -1px; padding: 62px var(--gutter) calc(34px + env(safe-area-inset-bottom)); }
   .gallery-page { padding-top: 56px; padding-bottom: 120px; }
   .gallery-heading { align-items: start; flex-direction: column; gap: 28px; margin-bottom: 82px; }
@@ -624,6 +653,15 @@ body:not(.contact-page) .site-footer.is-open { transform: translate3d(0, 0, 0); 
   }
   .project-preview-thumb { height: min(42vw, 180px); scroll-snap-align: center; }
   .project-preview-thumb img { filter: none; }
+  .project-browser.is-mobile-browsing .project-preview-thumb {
+    opacity: .28; transition: opacity .72s ease, transform .72s cubic-bezier(.16,1,.3,1);
+  }
+  .project-browser.is-mobile-browsing .project-preview-thumb.is-mobile-active {
+    opacity: 1; transform: translateY(-4px);
+  }
+  .project-browser.is-mobile-browsing .project-preview-thumb.is-mobile-active img {
+    transform: scale(1.025); filter: brightness(1) saturate(1);
+  }
   .lightbox { height: 100dvh; max-height: 100dvh; }
   .lightbox[open] { display: block; }
   .lightbox-stage { height: 100dvh; padding: 68px 12px 92px; }
@@ -660,6 +698,12 @@ body:not(.contact-page) .site-footer.is-open { transform: translate3d(0, 0, 0); 
     align-items: start; justify-content: end; gap: 42px;
   }
   .footer-contact { text-align: left; }
+  body.work-directory-page { padding-bottom: calc(34px + env(safe-area-inset-bottom)); }
+  body.work-directory-page .site-footer {
+    height: min(250px, 62dvh); padding-inline: var(--gutter);
+    flex-direction: column; align-items: start; justify-content: end; gap: 28px;
+  }
+  body.work-directory-page .footer-contact { text-align: left; }
 }
 
 @media (hover: none), (pointer: coarse) {

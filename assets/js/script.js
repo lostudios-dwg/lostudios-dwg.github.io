@@ -56,6 +56,8 @@ if (homePanels.length) {
 }
 
 const contactDrawer = document.querySelector("body:not(.contact-page) .site-footer");
+let setContactDrawerOpen = null;
+let contactDrawerCollapsedByScroll = false;
 
 if (contactDrawer) {
   const drawerToggle = document.createElement("button");
@@ -66,22 +68,31 @@ if (contactDrawer) {
   drawerToggle.setAttribute("aria-label", "Show contact information");
   contactDrawer.prepend(drawerToggle);
 
-  const setDrawerOpen = (isOpen) => {
+  setContactDrawerOpen = (isOpen) => {
     contactDrawer.classList.toggle("is-open", isOpen);
     drawerToggle.setAttribute("aria-expanded", String(isOpen));
     drawerToggle.setAttribute("aria-label", `${isOpen ? "Hide" : "Show"} contact information`);
   };
 
+  setContactDrawerOpen(true);
+
   drawerToggle.addEventListener("click", () => {
-    setDrawerOpen(!contactDrawer.classList.contains("is-open"));
+    setContactDrawerOpen(!contactDrawer.classList.contains("is-open"));
   });
   document.addEventListener("click", (event) => {
     if (contactDrawer.contains(event.target)) return;
-    setDrawerOpen(false);
+    setContactDrawerOpen(false);
   });
   document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") setDrawerOpen(false);
+    if (event.key === "Escape") setContactDrawerOpen(false);
   });
+  window.addEventListener("scroll", () => {
+    if (contactDrawerCollapsedByScroll || window.scrollY < 48) return;
+    contactDrawerCollapsedByScroll = true;
+    if (!document.body.classList.contains("category-description-active")) {
+      setContactDrawerOpen(false);
+    }
+  }, { passive: true });
 }
 
 const workCategories = document.querySelectorAll(".category");
@@ -109,7 +120,7 @@ if (workCategories.length) {
 
   const supportsCategoryHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 
-  if (descriptionPanel && descriptionLabel && descriptionCopy && supportsCategoryHover) {
+  if (descriptionPanel && descriptionLabel && descriptionCopy) {
     let activeCategory = null;
     let hideDescriptionTimer = null;
     let switchDescriptionTimer = null;
@@ -140,12 +151,7 @@ if (workCategories.length) {
       descriptionPanel.setAttribute("aria-hidden", "false");
       document.body.classList.add("category-description-active");
 
-      if (contactDrawer) {
-        contactDrawer.classList.remove("is-open");
-        const drawerToggle = contactDrawer.querySelector(".footer-toggle");
-        drawerToggle?.setAttribute("aria-expanded", "false");
-        drawerToggle?.setAttribute("aria-label", "Show contact information");
-      }
+      if (setContactDrawerOpen) setContactDrawerOpen(true);
     };
 
     const hideCategoryDescription = () => {
@@ -157,18 +163,46 @@ if (workCategories.length) {
         activeCategory = null;
         contactReleaseTimer = window.setTimeout(() => {
           document.body.classList.remove("category-description-active");
+          if (contactDrawerCollapsedByScroll && setContactDrawerOpen) setContactDrawerOpen(false);
         }, 700);
       }, 220);
     };
 
-    workCategories.forEach((category) => {
-      category.addEventListener("mouseenter", () => showCategoryDescription(category));
-      category.addEventListener("mouseleave", () => {
-        if (document.activeElement !== category) hideCategoryDescription();
+    if (supportsCategoryHover) {
+      workCategories.forEach((category) => {
+        category.addEventListener("mouseenter", () => showCategoryDescription(category));
+        category.addEventListener("mouseleave", () => {
+          if (document.activeElement !== category) hideCategoryDescription();
+        });
+        category.addEventListener("focus", () => showCategoryDescription(category));
+        category.addEventListener("blur", hideCategoryDescription);
       });
-      category.addEventListener("focus", () => showCategoryDescription(category));
-      category.addEventListener("blur", hideCategoryDescription);
-    });
+    } else {
+      let mobileDescriptionFrame = 0;
+      const updateMobileDescription = () => {
+        if (window.scrollY < 48) return;
+        const readingLine = window.innerHeight * .48;
+        const visibleCategories = [...workCategories].filter((category) => {
+          const bounds = category.getBoundingClientRect();
+          return bounds.bottom > window.innerHeight * .18 && bounds.top < window.innerHeight * .78;
+        });
+        if (!visibleCategories.length) {
+          hideCategoryDescription();
+          return;
+        }
+        const nearestCategory = visibleCategories.reduce((nearest, category) => {
+          const center = category.getBoundingClientRect().top + category.offsetHeight / 2;
+          const nearestCenter = nearest.getBoundingClientRect().top + nearest.offsetHeight / 2;
+          return Math.abs(center - readingLine) < Math.abs(nearestCenter - readingLine) ? category : nearest;
+        });
+        showCategoryDescription(nearestCategory);
+      };
+      window.addEventListener("scroll", () => {
+        cancelAnimationFrame(mobileDescriptionFrame);
+        mobileDescriptionFrame = requestAnimationFrame(updateMobileDescription);
+      }, { passive: true });
+      window.addEventListener("pageshow", updateMobileDescription);
+    }
   }
 }
 
@@ -243,6 +277,28 @@ if (projectGallery) {
     projectBrowser.className = "project-browser";
     galleryImages[0].closest(".project-gallery-item").after(projectBrowser);
     projectBrowser.append(previewFigure, previewReel);
+
+    const previewThumbs = [...previewReel.querySelectorAll(".project-preview-thumb")];
+    if (previewThumbs.length && window.matchMedia("(hover: none), (pointer: coarse)").matches) {
+      projectBrowser.classList.add("is-mobile-browsing");
+      let reelFrame = 0;
+      const updateActivePreview = () => {
+        const reelBounds = previewReel.getBoundingClientRect();
+        const reelCenter = reelBounds.left + reelBounds.width / 2;
+        const nearestThumb = previewThumbs.reduce((nearest, thumb) => {
+          const center = thumb.getBoundingClientRect().left + thumb.offsetWidth / 2;
+          const nearestCenter = nearest.getBoundingClientRect().left + nearest.offsetWidth / 2;
+          return Math.abs(center - reelCenter) < Math.abs(nearestCenter - reelCenter) ? thumb : nearest;
+        });
+        previewThumbs.forEach((thumb) => thumb.classList.toggle("is-mobile-active", thumb === nearestThumb));
+      };
+      updateActivePreview();
+      previewReel.addEventListener("scroll", () => {
+        cancelAnimationFrame(reelFrame);
+        reelFrame = requestAnimationFrame(updateActivePreview);
+      }, { passive: true });
+      window.addEventListener("resize", updateActivePreview);
+    }
 
     const lightbox = document.createElement("dialog");
     lightbox.className = "lightbox";
