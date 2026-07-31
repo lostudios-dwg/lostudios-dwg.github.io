@@ -5,18 +5,20 @@ if (isGraphiteTheme) {
   document.body.classList.add("theme-graphite");
   document.documentElement.classList.add("theme-graphite-root");
 
-  const comparison = document.createElement("nav");
-  comparison.className = "theme-compare";
-  comparison.setAttribute("aria-label", "Compare website designs");
-  const originalPath = window.location.pathname.endsWith("/concept.html")
-    ? "index.html"
-    : `${window.location.pathname.split("/").pop() || "index.html"}`;
-  comparison.innerHTML = `
-    <a href="${originalPath}" data-theme-original>Original</a>
-    <span aria-hidden="true">/</span>
-    <a class="is-active" href="concept.html">Graphite</a>
-  `;
-  document.body.appendChild(comparison);
+  if (!document.querySelector(".theme-compare")) {
+    const comparison = document.createElement("nav");
+    comparison.className = "theme-compare";
+    comparison.setAttribute("aria-label", "Compare website designs");
+    const originalPath = window.location.pathname.endsWith("/concept.html")
+      ? "index.html"
+      : `${window.location.pathname.split("/").pop() || "index.html"}`;
+    comparison.innerHTML = `
+      <a href="${originalPath}" data-theme-original>Original</a>
+      <span aria-hidden="true">/</span>
+      <a class="is-active" href="concept.html">Concept</a>
+    `;
+    document.body.appendChild(comparison);
+  }
 }
 
 const menuButton = document.querySelector(".menu-button");

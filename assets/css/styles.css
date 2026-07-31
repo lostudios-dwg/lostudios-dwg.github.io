@@ -136,6 +136,15 @@ h1, h2, h3, p { margin-top: 0; }
 .contact-primary { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
 .contact-primary a { font-size: clamp(23px, 3vw, 44px); line-height: 1.2; letter-spacing: -.045em; }
 .contact-primary a:hover, .contact-primary a:focus-visible { opacity: .55; }
+.contact-portfolio {
+  width: min(100%, 430px); margin-top: clamp(34px, 5vw, 58px); padding: 17px 0;
+  display: flex; align-items: center; justify-content: space-between; gap: 24px;
+  border-top: 1px solid #111; border-bottom: 1px solid #111;
+  font-size: 13px; letter-spacing: .04em;
+}
+.contact-portfolio span:last-child { transition: transform .4s cubic-bezier(.2,.75,.25,1); }
+.contact-portfolio:hover span:last-child,
+.contact-portfolio:focus-visible span:last-child { transform: translateX(8px); }
 .contact-socials {
   margin-top: clamp(48px, 7vw, 82px); padding-top: 20px; border-top: 1px solid #d8d8d8;
   display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px;
@@ -671,12 +680,12 @@ body:not(.contact-page) .site-footer.is-open { transform: translate3d(0, 0, 0); 
 .theme-graphite .project-card:focus-visible::after { opacity: .65; animation: graphite-sweep .85s cubic-bezier(.2,.7,.2,1) both; }
 .theme-compare {
   position: fixed; z-index: 80; left: var(--gutter); bottom: 46px;
-  display: flex; align-items: center; gap: 9px; padding: 9px 12px;
+  display: flex; align-items: center; gap: 10px; min-height: 36px; padding: 10px 14px;
   color: #ddd; background: rgba(15,15,15,.92); border: 1px solid rgba(255,255,255,.25);
   font-size: 9px; line-height: 1; letter-spacing: .11em; text-transform: uppercase;
   -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
 }
-.theme-compare a { opacity: .5; }
+.theme-compare a { min-height: 20px; display: inline-flex; align-items: center; opacity: .5; }
 .theme-compare a:hover, .theme-compare a:focus-visible, .theme-compare a.is-active { opacity: 1; }
 
 @keyframes graphite-sweep { from { transform: translateX(0); } to { transform: translateX(calc(100vw / 3 - 2 * var(--gutter))); } }
