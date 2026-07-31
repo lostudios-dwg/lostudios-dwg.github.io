@@ -100,6 +100,72 @@ if (workCategories.length) {
   } else {
     workCategories.forEach((category) => category.classList.add("is-visible"));
   }
+
+  const descriptionPanel = document.querySelector(".work-description-panel");
+  const descriptionLabel = descriptionPanel?.querySelector(".work-description-label");
+  const descriptionCopy = descriptionPanel?.querySelector(".work-description-copy");
+
+  if (descriptionPanel && descriptionLabel && descriptionCopy) {
+    let activeCategory = null;
+    let hideDescriptionTimer = null;
+    let switchDescriptionTimer = null;
+    let contactReleaseTimer = null;
+
+    const updateDescription = (category) => {
+      descriptionLabel.textContent = category.dataset.category || "";
+      descriptionCopy.textContent = category.dataset.description || "";
+      activeCategory = category;
+    };
+
+    const showCategoryDescription = (category) => {
+      window.clearTimeout(hideDescriptionTimer);
+      window.clearTimeout(switchDescriptionTimer);
+      window.clearTimeout(contactReleaseTimer);
+
+      if (descriptionPanel.classList.contains("is-active") && activeCategory !== category) {
+        descriptionPanel.classList.add("is-switching");
+        switchDescriptionTimer = window.setTimeout(() => {
+          updateDescription(category);
+          requestAnimationFrame(() => descriptionPanel.classList.remove("is-switching"));
+        }, 200);
+      } else if (!activeCategory) {
+        updateDescription(category);
+      }
+
+      descriptionPanel.classList.add("is-active");
+      descriptionPanel.setAttribute("aria-hidden", "false");
+      document.body.classList.add("category-description-active");
+
+      if (contactDrawer) {
+        contactDrawer.classList.remove("is-open");
+        const drawerToggle = contactDrawer.querySelector(".footer-toggle");
+        drawerToggle?.setAttribute("aria-expanded", "false");
+        drawerToggle?.setAttribute("aria-label", "Show contact information");
+      }
+    };
+
+    const hideCategoryDescription = () => {
+      window.clearTimeout(hideDescriptionTimer);
+      hideDescriptionTimer = window.setTimeout(() => {
+        window.clearTimeout(switchDescriptionTimer);
+        descriptionPanel.classList.remove("is-active", "is-switching");
+        descriptionPanel.setAttribute("aria-hidden", "true");
+        activeCategory = null;
+        contactReleaseTimer = window.setTimeout(() => {
+          document.body.classList.remove("category-description-active");
+        }, 700);
+      }, 220);
+    };
+
+    workCategories.forEach((category) => {
+      category.addEventListener("mouseenter", () => showCategoryDescription(category));
+      category.addEventListener("mouseleave", () => {
+        if (document.activeElement !== category) hideCategoryDescription();
+      });
+      category.addEventListener("focus", () => showCategoryDescription(category));
+      category.addEventListener("blur", hideCategoryDescription);
+    });
+  }
 }
 
 const imageCycles = document.querySelectorAll(".image-cycle");
