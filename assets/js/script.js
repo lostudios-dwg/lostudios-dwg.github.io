@@ -330,7 +330,7 @@ if (projectGallery) {
     };
 
     const setZoom = (nextZoom) => {
-      zoom = Math.min(4, Math.max(1, nextZoom));
+      zoom = Math.min(6, Math.max(1, nextZoom));
       clampPan();
       renderTransform();
       fullImage.classList.toggle("is-zoomed", zoom > 1);
@@ -458,7 +458,7 @@ if (projectGallery) {
         showImage(currentIndex + (swipeX < 0 ? 1 : -1));
         return;
       }
-      if (!pointerMoved) setZoom(zoom === 1 ? 2 : 1);
+      if (!pointerMoved) setZoom(zoom === 1 ? 2.5 : 1);
     };
 
     fullImage.addEventListener("pointerup", finishPan);
