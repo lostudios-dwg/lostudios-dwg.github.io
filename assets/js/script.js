@@ -107,7 +107,9 @@ if (workCategories.length) {
   const descriptionLabel = descriptionPanel?.querySelector(".work-description-label");
   const descriptionCopy = descriptionPanel?.querySelector(".work-description-copy");
 
-  if (descriptionPanel && descriptionLabel && descriptionCopy) {
+  const supportsCategoryHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+
+  if (descriptionPanel && descriptionLabel && descriptionCopy && supportsCategoryHover) {
     let activeCategory = null;
     let hideDescriptionTimer = null;
     let switchDescriptionTimer = null;
