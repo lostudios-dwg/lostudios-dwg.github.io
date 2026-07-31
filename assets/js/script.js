@@ -27,7 +27,7 @@ document.addEventListener("click", (event) => {
   document.body.classList.add("page-leaving");
   window.setTimeout(() => {
     window.location.href = destination.href;
-  }, 620);
+  }, 520);
 });
 
 if (menuButton) {
@@ -35,6 +35,50 @@ if (menuButton) {
     const isOpen = document.body.classList.toggle("menu-open");
     menuButton.setAttribute("aria-expanded", String(isOpen));
     document.body.style.overflow = isOpen ? "hidden" : "";
+  });
+}
+
+const homePanels = document.querySelectorAll(".home-page .home-hero, .home-page .home-about, .home-page .home-work");
+
+if (homePanels.length) {
+  if ("IntersectionObserver" in window && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    const panelObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        entry.target.classList.toggle("is-in-view", entry.isIntersecting);
+      });
+    }, { threshold: 0.16, rootMargin: "-8% 0px -8%" });
+    homePanels.forEach((panel) => panelObserver.observe(panel));
+  } else {
+    homePanels.forEach((panel) => panel.classList.add("is-in-view"));
+  }
+}
+
+const contactDrawer = document.querySelector("body:not(.contact-page) .site-footer");
+
+if (contactDrawer) {
+  const drawerToggle = document.createElement("button");
+  drawerToggle.className = "footer-toggle";
+  drawerToggle.type = "button";
+  drawerToggle.textContent = "Contact";
+  drawerToggle.setAttribute("aria-expanded", "false");
+  drawerToggle.setAttribute("aria-label", "Show contact information");
+  contactDrawer.prepend(drawerToggle);
+
+  const setDrawerOpen = (isOpen) => {
+    contactDrawer.classList.toggle("is-open", isOpen);
+    drawerToggle.setAttribute("aria-expanded", String(isOpen));
+    drawerToggle.setAttribute("aria-label", `${isOpen ? "Hide" : "Show"} contact information`);
+  };
+
+  drawerToggle.addEventListener("click", () => {
+    setDrawerOpen(!contactDrawer.classList.contains("is-open"));
+  });
+  document.addEventListener("click", (event) => {
+    if (contactDrawer.contains(event.target)) return;
+    setDrawerOpen(false);
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") setDrawerOpen(false);
   });
 }
 
@@ -141,6 +185,7 @@ if (projectGallery) {
         <button class="lightbox-zoom-in" type="button" aria-label="Zoom in">&plus;</button>
         <button class="lightbox-zoom-reset" type="button">Reset</button>
       </div>
+      <p class="lightbox-gesture-hint">Pinch to zoom · drag to move</p>
       <button class="lightbox-nav lightbox-prev" type="button" aria-label="Previous image">&larr;</button>
       <div class="lightbox-stage">
         <div class="lightbox-image-wrap"><img src="" alt=""></div>
@@ -167,6 +212,37 @@ if (projectGallery) {
     let pointerMoved = false;
     let panFrame = 0;
     let imageTransitionTimer = 0;
+    const activePointers = new Map();
+    let pinchStartDistance = 0;
+    let pinchStartZoom = 1;
+    let pinchStartPanX = 0;
+    let pinchStartPanY = 0;
+    let pinchStartCenterX = 0;
+    let pinchStartCenterY = 0;
+
+    const getPinchGeometry = () => {
+      const pointers = [...activePointers.values()];
+      if (pointers.length < 2) return null;
+      const first = pointers[0];
+      const second = pointers[1];
+      return {
+        distance: Math.hypot(second.x - first.x, second.y - first.y),
+        centerX: (first.x + second.x) / 2,
+        centerY: (first.y + second.y) / 2
+      };
+    };
+
+    const beginPinch = () => {
+      const geometry = getPinchGeometry();
+      if (!geometry) return;
+      pinchStartDistance = Math.max(1, geometry.distance);
+      pinchStartZoom = zoom;
+      pinchStartPanX = panX;
+      pinchStartPanY = panY;
+      pinchStartCenterX = geometry.centerX;
+      pinchStartCenterY = geometry.centerY;
+      pointerMoved = true;
+    };
 
     const clampPan = () => {
       if (zoom === 1) {
@@ -254,16 +330,32 @@ if (projectGallery) {
 
     fullImage.addEventListener("pointerdown", (event) => {
       if (event.button !== 0 && event.pointerType === "mouse") return;
+      activePointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+      fullImage.setPointerCapture(event.pointerId);
+      if (activePointers.size === 2) {
+        beginPinch();
+        fullImage.classList.add("is-panning");
+        return;
+      }
       dragStartX = event.clientX;
       dragStartY = event.clientY;
       dragOriginX = panX;
       dragOriginY = panY;
       pointerMoved = false;
-      fullImage.setPointerCapture(event.pointerId);
       fullImage.classList.add("is-panning");
     });
 
     fullImage.addEventListener("pointermove", (event) => {
+      if (!activePointers.has(event.pointerId)) return;
+      activePointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+      if (activePointers.size >= 2) {
+        const geometry = getPinchGeometry();
+        if (!geometry) return;
+        panX = pinchStartPanX + geometry.centerX - pinchStartCenterX;
+        panY = pinchStartPanY + geometry.centerY - pinchStartCenterY;
+        setZoom(pinchStartZoom * (geometry.distance / pinchStartDistance));
+        return;
+      }
       if (!fullImage.hasPointerCapture(event.pointerId)) return;
       const deltaX = event.clientX - dragStartX;
       const deltaY = event.clientY - dragStartY;
@@ -276,10 +368,25 @@ if (projectGallery) {
     });
 
     const finishPan = (event) => {
+      if (!activePointers.has(event.pointerId)) return;
+      const wasPinching = activePointers.size > 1;
+      activePointers.delete(event.pointerId);
       if (!fullImage.hasPointerCapture(event.pointerId)) return;
       const swipeX = event.clientX - dragStartX;
       const swipeY = event.clientY - dragStartY;
       fullImage.releasePointerCapture(event.pointerId);
+      if (wasPinching) {
+        const remainingPointer = [...activePointers.values()][0];
+        if (remainingPointer) {
+          dragStartX = remainingPointer.x;
+          dragStartY = remainingPointer.y;
+          dragOriginX = panX;
+          dragOriginY = panY;
+        } else {
+          fullImage.classList.remove("is-panning");
+        }
+        return;
+      }
       fullImage.classList.remove("is-panning");
       if (zoom === 1 && pointerMoved && Math.abs(swipeX) > 55 && Math.abs(swipeX) > Math.abs(swipeY) * 1.25) {
         showImage(currentIndex + (swipeX < 0 ? 1 : -1));
@@ -290,10 +397,11 @@ if (projectGallery) {
 
     fullImage.addEventListener("pointerup", finishPan);
     fullImage.addEventListener("pointercancel", (event) => {
+      activePointers.delete(event.pointerId);
       if (fullImage.hasPointerCapture(event.pointerId)) {
         fullImage.releasePointerCapture(event.pointerId);
       }
-      fullImage.classList.remove("is-panning");
+      if (!activePointers.size) fullImage.classList.remove("is-panning");
     });
 
     stage.addEventListener("wheel", (event) => {
