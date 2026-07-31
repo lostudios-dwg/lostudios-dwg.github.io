@@ -23,6 +23,7 @@ document.addEventListener("click", (event) => {
   if (destination.origin !== window.location.origin || destination.pathname === window.location.pathname) return;
 
   event.preventDefault();
+  try { sessionStorage.setItem("contact-intro-seen", "true"); } catch (error) { /* Storage may be unavailable. */ }
   document.body.classList.remove("page-ready");
   document.body.classList.add("page-leaving");
   window.setTimeout(() => {
@@ -74,7 +75,9 @@ if (contactDrawer) {
     drawerToggle.setAttribute("aria-label", `${isOpen ? "Hide" : "Show"} contact information`);
   };
 
-  setContactDrawerOpen(true);
+  let shouldIntroduceContact = document.body.classList.contains("home-page");
+  try { shouldIntroduceContact = shouldIntroduceContact && sessionStorage.getItem("contact-intro-seen") !== "true"; } catch (error) { /* Use page default. */ }
+  setContactDrawerOpen(shouldIntroduceContact);
 
   drawerToggle.addEventListener("click", () => {
     setContactDrawerOpen(!contactDrawer.classList.contains("is-open"));
@@ -89,6 +92,7 @@ if (contactDrawer) {
   window.addEventListener("scroll", () => {
     if (contactDrawerCollapsedByScroll || window.scrollY < 48) return;
     contactDrawerCollapsedByScroll = true;
+    try { sessionStorage.setItem("contact-intro-seen", "true"); } catch (error) { /* Storage may be unavailable. */ }
     if (!document.body.classList.contains("category-description-active")) {
       setContactDrawerOpen(false);
     }
