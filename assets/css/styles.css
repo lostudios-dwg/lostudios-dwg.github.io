@@ -598,7 +598,7 @@ body:not(.contact-page) .site-footer.is-open { transform: translate3d(0, 0, 0); 
 }
 .project-preview-thumb img {
   display: block; width: 100%; height: 100%; object-fit: contain;
-  filter: saturate(.88); transition: transform .4s ease, filter .3s ease;
+  filter: brightness(.48) saturate(.7); transition: transform .4s ease, filter .45s ease;
 }
 .project-preview-thumb::after {
   content: ""; position: absolute; inset: 0; border: 1px solid transparent;
@@ -612,7 +612,7 @@ body:not(.contact-page) .site-footer.is-open { transform: translate3d(0, 0, 0); 
   transition: transform .35s cubic-bezier(.2,.75,.25,1), letter-spacing .35s ease;
 }
 .project-preview-thumb:hover img, .project-preview-thumb:focus-visible img {
-  transform: scale(1.035); filter: saturate(1);
+  transform: scale(1.035); filter: brightness(1) saturate(1);
 }
 .project-preview-thumb:hover .project-preview-number,
 .project-preview-thumb:focus-visible .project-preview-number {
@@ -832,7 +832,7 @@ body:not(.contact-page) .site-footer.is-open { transform: translate3d(0, 0, 0); 
     margin-inline: calc(var(--gutter) * -1);
     width: calc(100% + (var(--gutter) * 2));
   }
-  .project-preview-main > img { transform: none; filter: none; }
+  .project-preview-main > img { transform: none; filter: brightness(.62) saturate(.8); }
   .project-preview-main::after { background: rgba(0,0,0,.04); }
   .project-more { min-width: 112px; min-height: 56px; }
   .project-preview-reel { gap: 30px; }
@@ -841,16 +841,7 @@ body:not(.contact-page) .site-footer.is-open { transform: translate3d(0, 0, 0); 
     scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
   }
   .project-preview-thumb { height: min(42vw, 180px); scroll-snap-align: center; }
-  .project-preview-thumb img { filter: none; }
-  .project-browser.is-mobile-browsing .project-preview-thumb {
-    opacity: .28; transition: opacity .72s ease, transform .72s cubic-bezier(.16,1,.3,1);
-  }
-  .project-browser.is-mobile-browsing .project-preview-thumb.is-mobile-active {
-    opacity: 1; transform: translateY(-4px);
-  }
-  .project-browser.is-mobile-browsing .project-preview-thumb.is-mobile-active img {
-    transform: scale(1.025); filter: brightness(1) saturate(1);
-  }
+  .project-preview-thumb img { filter: brightness(.48) saturate(.7); }
   .lightbox { height: 100dvh; max-height: 100dvh; }
   .lightbox[open] { display: block; }
   .lightbox-stage { height: 100dvh; padding: 68px 12px 92px; }

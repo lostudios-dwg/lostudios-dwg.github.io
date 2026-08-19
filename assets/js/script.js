@@ -285,28 +285,6 @@ projectGalleries.forEach((projectGallery) => {
     else galleryImages[0].closest(".project-gallery-item").after(projectBrowser);
     projectBrowser.append(previewFigure, previewReel);
 
-    const previewThumbs = [...previewReel.querySelectorAll(".project-preview-thumb")];
-    if (previewThumbs.length && window.matchMedia("(hover: none), (pointer: coarse)").matches) {
-      projectBrowser.classList.add("is-mobile-browsing");
-      let reelFrame = 0;
-      const updateActivePreview = () => {
-        const reelBounds = previewReel.getBoundingClientRect();
-        const reelCenter = reelBounds.left + reelBounds.width / 2;
-        const nearestThumb = previewThumbs.reduce((nearest, thumb) => {
-          const center = thumb.getBoundingClientRect().left + thumb.offsetWidth / 2;
-          const nearestCenter = nearest.getBoundingClientRect().left + nearest.offsetWidth / 2;
-          return Math.abs(center - reelCenter) < Math.abs(nearestCenter - reelCenter) ? thumb : nearest;
-        });
-        previewThumbs.forEach((thumb) => thumb.classList.toggle("is-mobile-active", thumb === nearestThumb));
-      };
-      updateActivePreview();
-      previewReel.addEventListener("scroll", () => {
-        cancelAnimationFrame(reelFrame);
-        reelFrame = requestAnimationFrame(updateActivePreview);
-      }, { passive: true });
-      window.addEventListener("resize", updateActivePreview);
-    }
-
     const lightbox = document.createElement("dialog");
     lightbox.className = "lightbox";
     lightbox.setAttribute("aria-label", "Fullscreen project image");
