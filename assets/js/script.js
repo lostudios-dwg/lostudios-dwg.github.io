@@ -56,6 +56,19 @@ if (homePanels.length) {
   }
 }
 
+const aboutToggle = document.querySelector(".about-toggle");
+const aboutMore = document.querySelector(".about-more");
+
+if (aboutToggle && aboutMore) {
+  aboutToggle.addEventListener("click", () => {
+    const isOpen = aboutToggle.getAttribute("aria-expanded") === "true";
+    aboutToggle.setAttribute("aria-expanded", String(!isOpen));
+    aboutToggle.textContent = isOpen ? "More" : "Less";
+    aboutMore.setAttribute("aria-hidden", String(isOpen));
+    aboutMore.classList.toggle("is-open", !isOpen);
+  });
+}
+
 const contactDrawer = document.querySelector("body:not(.contact-page) .site-footer");
 let setContactDrawerOpen = null;
 let contactDrawerCollapsedByScroll = false;

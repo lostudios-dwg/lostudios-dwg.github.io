@@ -3,39 +3,40 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="LO Studios — interior design, furniture, and spatial practice by Shih Hsuan (Alvin) Lo.">
+  <meta name="description" content="Interior design, furniture, and spatial practice by Shih Hsuan (Alvin) Lo.">
   <title>Shih Hsuan (Alvin) Lo</title>
   <link rel="stylesheet" href="assets/css/styles.css">
   <script src="assets/js/script.js" defer></script>
 </head>
 <body class="home-page">
   <header class="site-header">
-    <a class="site-name" href="index.html">Shih Hsuan(Alvin) Lo</a>
+    <a class="site-name" href="index.html">Shih Hsuan (Alvin) Lo</a>
     <button class="menu-button" aria-expanded="false" aria-controls="primary-nav">
       <span></span><span></span><span></span><span class="sr-only">Menu</span>
     </button>
     <nav id="primary-nav" class="primary-nav" aria-label="Primary navigation">
       <a href="contact.html">Contact</a>
-      <a href="about.html">About</a>
       <a href="work.html">Work</a>
     </nav>
   </header>
 
   <main>
     <section class="home-hero">
-      <h1>LO STUDIOS</h1>
-      <a class="hero-image" href="work.html" aria-label="View work">
-        <img src="assets/images/home-studio.jpg" alt="Alvin Lo working on a furniture piece in the studio">
-      </a>
     </section>
 
     <section class="home-about">
-      <div class="portrait"><img src="assets/images/about-portrait.png" alt="Shih Hsuan Alvin Lo"></div>
+      <div class="portrait"><img src="assets/images/about-portrait.png" alt="Portrait of Shih Hsuan (Alvin) Lo"></div>
       <div class="about-copy">
         <h2>ABOUT</h2>
         <p><strong>Shih Hsuan(Alvin) Lo</strong> is an independent interior designer based between New York and Taipei. Recently graduated with an MFA in Interior Design from Pratt Institute, following an undergraduate background in English Literature.</p>
         <p>His work has been featured in Vogue Taiwan and shortlisted in a Buildner design competition. Alongside his academic and professional experience, Alvin has also completed his own realized design project in Taiwan, developing the work from concept to execution.</p>
-        <a class="text-link" href="about.html">Read more</a>
+        <div class="about-more" id="home-about-more" aria-hidden="true">
+          <div>
+            <p>His design approach is rooted in minimal, clean, and refined spatial expression, with a strong focus on atmosphere, materiality, and detail. For Alvin, design is not only about form and function, but also about creating spaces that carry imagery, emotion, and narrative. Shaped by his background in literature, he is especially interested in how interiors can tell stories through proportion, light, texture, and spatial experience.</p>
+            <p>Frequently traveling to study architecture, interiors, and urban atmospheres, Alvin also uses photography as a way to observe and document space. These experiences continue to shape his design language and his sensitivity toward the relationship between people, memory, and the built environment.</p>
+          </div>
+        </div>
+        <button class="text-link about-toggle" type="button" aria-expanded="false" aria-controls="home-about-more">More</button>
       </div>
     </section>
 
@@ -48,7 +49,6 @@
         <a class="project-card project-card--directory" href="realized.html">
           <div class="project-image image-cycle">
             <img class="cycle-frame is-active" src="assets/images/projects/yingli-tea-house/01.jpg" alt="Ying-Li Tea House directory image">
-            <img class="cycle-frame" src="assets/images/projects/decicco-sons/01.png" alt="DeCicco and Sons directory image">
           </div>
           <div class="project-meta"><h3>Realized</h3><span>View category</span></div>
         </a>
