@@ -6,24 +6,36 @@
 </head>
 <body>
   <header class="site-header">
-    <a class="site-name" href="index.html">Shih Hsuan(Alvin) Lo</a>
+    <a class="site-name" href="index.html"><span class="site-brand">LO STUDIOS</span><span class="site-byline">by Shih Hsuan (Alvin) Lo</span></a>
     <button class="menu-button" aria-expanded="false" aria-controls="primary-nav"><span></span><span></span><span></span><span class="sr-only">Menu</span></button>
-    <nav id="primary-nav" class="primary-nav"><a href="contact.html">Contact</a><a class="active" href="work.html">Work</a></nav>
+    <nav id="primary-nav" class="primary-nav" aria-label="Primary navigation">
+      <div class="nav-work-group">
+        <button class="nav-work-toggle active" type="button" aria-expanded="false" aria-controls="nav-work-submenu"><span>Work</span><span class="nav-work-symbol" aria-hidden="true">+</span></button>
+        <div id="nav-work-submenu" class="nav-work-submenu" aria-hidden="true"><div class="nav-work-submenu-inner">
+          <a class="active" href="all-works.html" tabindex="-1">Selected Projects</a>
+          <a href="furniture.html" tabindex="-1">Furniture</a>
+          <a href="academic.html" tabindex="-1">Academic</a>
+          <a href="render.html" tabindex="-1">Render</a>
+          <a href="models.html" tabindex="-1">Models</a>
+        </div></div>
+      </div>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+    </nav>
   </header>
   <main class="gallery-page directory-page">
     <div class="gallery-heading directory-heading">
       <div><p class="directory-kicker">Selected Work · Built Environments</p><h1>REALIZED</h1></div>
-      <a class="directory-back" href="work.html">Back to Work</a>
+      <a class="directory-back" href="all-works.html">Back to Selected Projects</a>
     </div>
     <div class="directory-groups">
       <section class="directory-section" aria-labelledby="realized-heading">
         <div class="directory-section-heading">
           <h2 id="realized-heading">Built Spaces</h2>
-          <p>Completed Projects</p>
         </div>
         <div class="project-grid project-grid--four">
           <a class="project-card" href="yingli-tea-house.html"><div class="project-image"><img src="assets/images/projects/yingli-tea-house/01.jpg" alt="Ying-Li Tea House"></div><div class="project-meta"><h2>Ying-Li Tea House</h2><span>Taichung, Taiwan · January 2026</span></div></a>
-          <a class="project-card" href="decicco-sons.html"><div class="project-image"><img src="assets/images/projects/decicco-sons/01.png" alt="DeCicco &amp; Sons Sleepy Hollow"></div><div class="project-meta"><h2>DeCicco &amp; Sons Sleepy Hollow</h2><span>Sleepy Hollow, New York · March 28, 2025</span></div></a>
+          <a class="project-card" href="decicco-sons.html"><div class="project-image"><img src="assets/images/projects/decicco-sons/00-hero.png" alt="DeCicco &amp; Sons Sleepy Hollow rear entrance rendering"></div><div class="project-meta"><h2>DeCicco &amp; Sons Sleepy Hollow</h2><span>Sleepy Hollow, New York · March 28, 2025</span></div></a>
         </div>
       </section>
     </div>

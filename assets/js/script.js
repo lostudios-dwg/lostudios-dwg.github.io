@@ -32,10 +32,45 @@ document.addEventListener("click", (event) => {
 });
 
 if (menuButton) {
-  menuButton.addEventListener("click", () => {
-    const isOpen = document.body.classList.toggle("menu-open");
+  const workMenuGroup = document.querySelector(".nav-work-group");
+  const workMenuToggle = document.querySelector(".nav-work-toggle");
+  const workSubmenu = document.querySelector(".nav-work-submenu");
+
+  const setWorkMenuOpen = (isOpen) => {
+    if (!workMenuGroup || !workMenuToggle || !workSubmenu) return;
+    workMenuGroup.classList.toggle("is-open", isOpen);
+    workMenuToggle.setAttribute("aria-expanded", String(isOpen));
+    workSubmenu.setAttribute("aria-hidden", String(!isOpen));
+    workSubmenu.querySelectorAll("a").forEach((link) => {
+      if (isOpen) link.removeAttribute("tabindex");
+      else link.setAttribute("tabindex", "-1");
+    });
+  };
+
+  const setMenuOpen = (isOpen) => {
+    document.body.classList.toggle("menu-open", isOpen);
     menuButton.setAttribute("aria-expanded", String(isOpen));
     document.body.style.overflow = isOpen ? "hidden" : "";
+    if (!isOpen) setWorkMenuOpen(false);
+    document.dispatchEvent(new CustomEvent("site-menu-toggle", { detail: { isOpen } }));
+  };
+
+  menuButton.addEventListener("click", () => {
+    setMenuOpen(!document.body.classList.contains("menu-open"));
+  });
+
+  document.querySelectorAll("#primary-nav a").forEach((link) => {
+    link.addEventListener("click", () => setMenuOpen(false));
+  });
+  workMenuToggle?.addEventListener("click", () => {
+    setWorkMenuOpen(workMenuToggle.getAttribute("aria-expanded") !== "true");
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      if (workMenuToggle?.getAttribute("aria-expanded") === "true") setWorkMenuOpen(false);
+      else setMenuOpen(false);
+    }
   });
 }
 
@@ -56,6 +91,101 @@ if (homePanels.length) {
   }
 }
 
+const renderCarousel = document.querySelector("[data-render-carousel]");
+
+if (renderCarousel) {
+  const slides = [...renderCarousel.querySelectorAll(".render-slide")];
+  const progress = renderCarousel.querySelector(".render-progress span");
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const interval = 7000;
+  let activeIndex = 0;
+  let timer = null;
+  let paused = false;
+  let touchStartX = null;
+  let suppressClickUntil = 0;
+
+  const setSlideInteractive = (slide, isInteractive) => {
+    slide.querySelectorAll(".render-advance, .render-caption").forEach((control) => {
+      if (isInteractive) control.removeAttribute("tabindex");
+      else control.setAttribute("tabindex", "-1");
+    });
+  };
+
+  const restartProgress = () => {
+    if (!progress || reduceMotion) return;
+    progress.style.animation = "none";
+    void progress.offsetWidth;
+    progress.style.animation = "";
+  };
+
+  const showSlide = (nextIndex) => {
+    if (slides.length < 2 || nextIndex === activeIndex) return;
+    slides[activeIndex].classList.remove("is-active");
+    slides[activeIndex].setAttribute("aria-hidden", "true");
+    setSlideInteractive(slides[activeIndex], false);
+    activeIndex = (nextIndex + slides.length) % slides.length;
+    slides[activeIndex].classList.add("is-active");
+    slides[activeIndex].setAttribute("aria-hidden", "false");
+    setSlideInteractive(slides[activeIndex], true);
+    restartProgress();
+  };
+
+  const stopCarousel = () => {
+    window.clearInterval(timer);
+    timer = null;
+  };
+
+  const startCarousel = () => {
+    if (reduceMotion || paused || document.hidden || slides.length < 2 || timer) return;
+    timer = window.setInterval(() => showSlide(activeIndex + 1), interval);
+  };
+
+  const setPaused = (shouldPause) => {
+    paused = shouldPause;
+    renderCarousel.classList.toggle("is-paused", shouldPause);
+    if (shouldPause) stopCarousel();
+    else startCarousel();
+  };
+
+  renderCarousel.addEventListener("mouseenter", () => setPaused(true));
+  renderCarousel.addEventListener("mouseleave", () => setPaused(false));
+  renderCarousel.addEventListener("focusin", () => setPaused(true));
+  renderCarousel.addEventListener("focusout", (event) => {
+    if (!renderCarousel.contains(event.relatedTarget)) setPaused(false);
+  });
+  renderCarousel.querySelectorAll(".render-advance").forEach((button) => {
+    button.addEventListener("click", () => {
+      if (Date.now() < suppressClickUntil) return;
+      showSlide(activeIndex + 1);
+    });
+  });
+  renderCarousel.addEventListener("touchstart", (event) => {
+    touchStartX = event.changedTouches[0]?.clientX ?? null;
+    setPaused(true);
+  }, { passive: true });
+  renderCarousel.addEventListener("touchend", (event) => {
+    const touchEndX = event.changedTouches[0]?.clientX;
+    if (touchStartX !== null && touchEndX !== undefined) {
+      const distance = touchEndX - touchStartX;
+      if (Math.abs(distance) > 45) {
+        suppressClickUntil = Date.now() + 500;
+        showSlide(activeIndex + (distance < 0 ? 1 : -1));
+      }
+    }
+    touchStartX = null;
+    window.setTimeout(() => setPaused(false), 1200);
+  }, { passive: true });
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) stopCarousel();
+    else startCarousel();
+  });
+  document.addEventListener("site-menu-toggle", (event) => {
+    setPaused(Boolean(event.detail?.isOpen));
+  });
+
+  startCarousel();
+}
+
 const aboutToggle = document.querySelector(".about-toggle");
 const aboutMore = document.querySelector(".about-more");
 
@@ -67,49 +197,6 @@ if (aboutToggle && aboutMore) {
     aboutMore.setAttribute("aria-hidden", String(isOpen));
     aboutMore.classList.toggle("is-open", !isOpen);
   });
-}
-
-const contactDrawer = document.querySelector("body:not(.contact-page) .site-footer");
-let setContactDrawerOpen = null;
-let contactDrawerCollapsedByScroll = false;
-
-if (contactDrawer) {
-  const drawerToggle = document.createElement("button");
-  drawerToggle.className = "footer-toggle";
-  drawerToggle.type = "button";
-  drawerToggle.textContent = "Contact";
-  drawerToggle.setAttribute("aria-expanded", "false");
-  drawerToggle.setAttribute("aria-label", "Show contact information");
-  contactDrawer.prepend(drawerToggle);
-
-  setContactDrawerOpen = (isOpen) => {
-    contactDrawer.classList.toggle("is-open", isOpen);
-    drawerToggle.setAttribute("aria-expanded", String(isOpen));
-    drawerToggle.setAttribute("aria-label", `${isOpen ? "Hide" : "Show"} contact information`);
-  };
-
-  let shouldIntroduceContact = document.body.classList.contains("home-page");
-  try { shouldIntroduceContact = shouldIntroduceContact && sessionStorage.getItem("contact-intro-seen") !== "true"; } catch (error) { /* Use page default. */ }
-  setContactDrawerOpen(shouldIntroduceContact);
-
-  drawerToggle.addEventListener("click", () => {
-    setContactDrawerOpen(!contactDrawer.classList.contains("is-open"));
-  });
-  document.addEventListener("click", (event) => {
-    if (contactDrawer.contains(event.target)) return;
-    setContactDrawerOpen(false);
-  });
-  document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") setContactDrawerOpen(false);
-  });
-  window.addEventListener("scroll", () => {
-    if (contactDrawerCollapsedByScroll || window.scrollY < 48) return;
-    contactDrawerCollapsedByScroll = true;
-    try { sessionStorage.setItem("contact-intro-seen", "true"); } catch (error) { /* Storage may be unavailable. */ }
-    if (!document.body.classList.contains("category-description-active")) {
-      setContactDrawerOpen(false);
-    }
-  }, { passive: true });
 }
 
 const workCategories = document.querySelectorAll(".category");
@@ -168,7 +255,6 @@ if (workCategories.length) {
       descriptionPanel.setAttribute("aria-hidden", "false");
       document.body.classList.add("category-description-active");
 
-      if (setContactDrawerOpen) setContactDrawerOpen(true);
     };
 
     const hideCategoryDescription = () => {
@@ -180,7 +266,6 @@ if (workCategories.length) {
         activeCategory = null;
         contactReleaseTimer = window.setTimeout(() => {
           document.body.classList.remove("category-description-active");
-          if (contactDrawerCollapsedByScroll && setContactDrawerOpen) setContactDrawerOpen(false);
         }, 700);
       }, 220);
     };
@@ -630,5 +715,47 @@ document.querySelectorAll(".assignment-two-poster").forEach((poster) => {
       return;
     }
     setPosterExpanded(false);
+  });
+});
+
+document.querySelectorAll("[data-visual-gallery]").forEach((gallery) => {
+  const lightbox = gallery.parentElement?.querySelector(".visual-lightbox");
+  if (!lightbox) return;
+
+  const fullImage = lightbox.querySelector(".visual-lightbox-media img");
+  const title = lightbox.querySelector(".visual-lightbox-info h2");
+  const meta = lightbox.querySelector(".visual-lightbox-info p");
+  const projectLink = lightbox.querySelector(".visual-lightbox-project");
+  const closeButton = lightbox.querySelector(".visual-lightbox-close");
+  if (!fullImage || !title || !meta || !projectLink || !closeButton) return;
+
+  const openItem = (item) => {
+    const preview = item.querySelector("img");
+    fullImage.src = item.dataset.full || preview?.src || "";
+    fullImage.alt = preview?.alt || "Enlarged project image";
+    title.textContent = item.dataset.title || "";
+    meta.textContent = item.dataset.meta || "";
+    const projectHref = item.dataset.project;
+    projectLink.hidden = !projectHref;
+    projectLink.href = projectHref || "#";
+    lightbox.showModal();
+    document.body.classList.add("visual-lightbox-open");
+    closeButton.focus();
+  };
+
+  const closeLightbox = () => {
+    if (lightbox.open) lightbox.close();
+  };
+
+  gallery.querySelectorAll(".visual-gallery-item").forEach((item) => {
+    item.addEventListener("click", () => openItem(item));
+  });
+  closeButton.addEventListener("click", closeLightbox);
+  lightbox.addEventListener("click", (event) => {
+    if (event.target === lightbox) closeLightbox();
+  });
+  lightbox.addEventListener("close", () => {
+    document.body.classList.remove("visual-lightbox-open");
+    fullImage.removeAttribute("src");
   });
 });

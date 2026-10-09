@@ -2,41 +2,24 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Academic — Shih Hsuan (Alvin) Lo</title><link rel="stylesheet" href="assets/css/styles.css"><script src="assets/js/script.js" defer></script>
+  <title>Academic — LO STUDIOS</title><link rel="stylesheet" href="assets/css/styles.css"><script src="assets/js/script.js" defer></script>
 </head>
 <body>
   <header class="site-header">
-    <a class="site-name" href="index.html">Shih Hsuan(Alvin) Lo</a>
+    <a class="site-name" href="index.html"><span class="site-brand">LO STUDIOS</span><span class="site-byline">by Shih Hsuan (Alvin) Lo</span></a>
     <button class="menu-button" aria-expanded="false" aria-controls="primary-nav"><span></span><span></span><span></span><span class="sr-only">Menu</span></button>
-    <nav id="primary-nav" class="primary-nav"><a href="contact.html">Contact</a><a class="active" href="work.html">Work</a></nav>
+    <a class="work-page-back" href="all-works.html"><span aria-hidden="true">←</span><span>Back</span></a>
+    <nav id="primary-nav" class="primary-nav" aria-label="Primary navigation">
+      <div class="nav-work-group"><button class="nav-work-toggle active" type="button" aria-expanded="false" aria-controls="nav-work-submenu"><span>Work</span><span class="nav-work-symbol" aria-hidden="true">+</span></button>
+        <div id="nav-work-submenu" class="nav-work-submenu" aria-hidden="true"><div class="nav-work-submenu-inner"><a href="all-works.html" tabindex="-1">Selected Projects</a><a href="furniture.html" tabindex="-1">Furniture</a><a class="active" href="academic.html" tabindex="-1">Academic</a><a href="render.html" tabindex="-1">Render</a><a href="models.html" tabindex="-1">Models</a></div></div>
+      </div><a href="about.html">About</a><a href="contact.html">Contact</a>
+    </nav>
   </header>
   <main class="gallery-page directory-page">
-    <div class="gallery-heading directory-heading">
-      <div><p class="directory-kicker">Selected Work · Academic Studies</p><h1>ACADEMIC</h1></div>
-      <a class="directory-back" href="work.html">Back to Work</a>
-    </div>
-
+    <div class="gallery-heading directory-heading"><h1>ACADEMIC</h1></div>
     <div class="directory-groups">
-      <section class="directory-section" aria-labelledby="spatial-heading">
-        <div class="directory-section-heading">
-          <h2 id="spatial-heading">Spatial</h2>
-          <p>Interior · Architecture · Environment</p>
-        </div>
-        <div class="project-grid project-grid--four">
-          <a class="project-card" href="thesis.html"><div class="project-image"><img src="assets/images/projects/thesis/01.png" alt="Present Absence thesis"></div><div class="project-meta"><h2>Present Absence</h2><span>Thesis</span></div></a>
-          <a class="project-card" href="library-l.html"><div class="project-image"><img src="assets/images/projects/library-l/00-hero.png" alt="Library L"></div><div class="project-meta"><h2>Library L</h2><span>Spatial Design</span></div></a>
-          <a class="project-card" href="floating.html"><div class="project-image"><img src="assets/images/projects/floating/00-hero.png" alt="Floating Community waterfront project"></div><div class="project-meta"><h2>Floating Community</h2><span>Spatial Design</span></div></a>
-          <a class="project-card" href="changing-ties.html"><div class="project-image"><img src="assets/images/projects/changing-ties/00-hero.jpg" alt="Changing Ties full-scale model"></div><div class="project-meta"><h2>Changing Ties</h2><span>Installation Design</span></div></a>
-          <a class="project-card" href="the-bind.html"><div class="project-image"><img src="assets/images/projects/the-bind/00-hero.jpg" alt="The Bind physical model"></div><div class="project-meta"><h2>The Bind</h2><span>Spatial Design</span></div></a>
-          <a class="project-card" href="city-pop.html"><div class="project-image"><img src="assets/images/projects/city-pop/00-hero.png" alt="City Pop interior"></div><div class="project-meta"><h2>City Pop</h2><span>Interior Design</span></div></a>
-        </div>
-      </section>
-
       <section class="directory-section" aria-labelledby="abstract-heading">
-        <div class="directory-section-heading">
-          <h2 id="abstract-heading">Abstract</h2>
-          <p>Ideation · Representation · Visual Studies</p>
-        </div>
+        <div class="directory-section-heading"><h2 id="abstract-heading">Abstract</h2></div>
         <div class="project-grid project-grid--four">
           <a class="project-card" href="assembling-atmospheres.html"><div class="project-image"><img src="assets/images/projects/assembling-atmospheres/00-hero.jpg" alt="Assembling Atmospheres cast plaster study"></div><div class="project-meta"><h2>Assembling Atmospheres</h2><span>Material Studies</span></div></a>
           <a class="project-card" href="natural-building.html"><div class="project-image"><img src="assets/images/projects/natural-building/00-hero.jpg" alt="Introduction to Natural Building field course"></div><div class="project-meta"><h2>Introduction to Natural Building</h2><span>Field &amp; Material Studies</span></div></a>
@@ -44,25 +27,13 @@
           <a class="project-card" href="neon-koji.html"><div class="project-image"><img src="assets/images/projects/neon-koji/00-hero.png" alt="NeonKōji type specimen"></div><div class="project-meta"><h2>NeonKōji</h2><span>AI Typography</span></div></a>
         </div>
       </section>
-
       <section class="directory-section" aria-labelledby="work-samples-heading">
-        <div class="directory-section-heading">
-          <h2 id="work-samples-heading">Work Samples</h2>
-          <p>Documentation · Technical Development</p>
-        </div>
+        <div class="directory-section-heading"><h2 id="work-samples-heading">Work Samples</h2></div>
         <div class="project-grid project-grid--four">
           <a class="project-card" href="revit-work-samples.html"><div class="project-image"><img src="assets/images/projects/revit-work-samples/00-hero.png" alt="Revit Work Samples drawing set"></div><div class="project-meta"><h2>Revit Work Samples</h2><span>Construction Documents</span></div></a>
         </div>
       </section>
-
     </div>
   </main>
-  <footer class="site-footer">
-    <div class="footer-social">
-      <a href="https://www.instagram.com/lostudios.dwg/" target="_blank" rel="noreferrer">@lostudios.dwg <span class="instagram" aria-hidden="true"></span></a>
-      <a href="https://www.instagram.com/fotolab_1995/" target="_blank" rel="noreferrer">@fotolab_1995 <span class="instagram" aria-hidden="true"></span></a>
-    </div>
-    <div class="footer-contact"><a href="tel:+19292702718">+1 929 270 2718</a><a href="mailto:alvinlo0101@gmail.com">alvinlo0101@gmail.com</a></div>
-  </footer>
 </body>
 </html>

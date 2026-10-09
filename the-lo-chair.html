@@ -10,9 +10,22 @@
 </head>
 <body class="project-the-lo-chair">
   <header class="site-header">
-    <a class="site-name" href="index.html">Shih Hsuan(Alvin) Lo</a>
+    <a class="site-name" href="index.html"><span class="site-brand">LO STUDIOS</span><span class="site-byline">by Shih Hsuan (Alvin) Lo</span></a>
     <button class="menu-button" aria-expanded="false" aria-controls="primary-nav"><span></span><span></span><span></span><span class="sr-only">Menu</span></button>
-    <nav id="primary-nav" class="primary-nav"><a href="contact.html">Contact</a><a class="active" href="work.html">Work</a></nav>
+    <nav id="primary-nav" class="primary-nav" aria-label="Primary navigation">
+      <div class="nav-work-group">
+        <button class="nav-work-toggle active" type="button" aria-expanded="false" aria-controls="nav-work-submenu"><span>Work</span><span class="nav-work-symbol" aria-hidden="true">+</span></button>
+        <div id="nav-work-submenu" class="nav-work-submenu" aria-hidden="true"><div class="nav-work-submenu-inner">
+          <a href="all-works.html" tabindex="-1">Selected Projects</a>
+          <a class="active" href="furniture.html" tabindex="-1">Furniture</a>
+          <a href="academic.html" tabindex="-1">Academic</a>
+          <a href="render.html" tabindex="-1">Render</a>
+          <a href="models.html" tabindex="-1">Models</a>
+        </div></div>
+      </div>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+    </nav>
   </header>
   <main class="project-page">
     <div class="project-intro">
