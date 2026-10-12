@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Editorial render index layout test for LO STUDIOS.">
+  <title>Render Layout Test — LO STUDIOS</title>
+  <link rel="stylesheet" href="assets/css/render-gallery.css?v=render-only-1">
+  <script src="assets/js/render-editorial-test.js?v=render-only-1" defer></script>
+</head>
+<body class="visual-gallery-page render-editorial-test editorial-loading">
+  <header class="site-header">
+    <a class="site-name" href="index.html"><span class="site-brand">LO STUDIOS</span><span class="site-byline">by Shih Hsuan (Alvin) Lo</span></a>
+    <button class="menu-button" aria-expanded="false" aria-controls="primary-nav"><span></span><span></span><span></span><span class="sr-only">Menu</span></button>
+    <a class="work-page-back" href="render.html"><span aria-hidden="true">←</span><span>Back</span></a>
+    <nav id="primary-nav" class="primary-nav" aria-label="Primary navigation"><div class="nav-work-group"><button class="nav-work-toggle active" type="button" aria-expanded="false" aria-controls="nav-work-submenu"><span>Work</span><span class="nav-work-symbol" aria-hidden="true">+</span></button><div id="nav-work-submenu" class="nav-work-submenu" aria-hidden="true"><div class="nav-work-submenu-inner"><a href="all-works.html" tabindex="-1">Selected Projects</a><a href="furniture.html" tabindex="-1">Furniture</a><a href="academic.html" tabindex="-1">Academic</a><a class="active" href="render.html" tabindex="-1">Render</a><a href="models.html" tabindex="-1">Models</a></div></div></div><a href="about.html">About</a><a href="contact.html">Contact</a></nav>
+  </header>
+  <main class="gallery-page directory-page visual-index editorial-render-index">
+    <section class="editorial-render-heading" aria-labelledby="render-test-title">
+      <h1 id="render-test-title">RENDER</h1>
+    </section>
+    <div class="editorial-render-tools" aria-label="Render gallery controls">
+      <div class="editorial-render-filters" role="group" aria-label="Filter renders">
+        <button class="is-active" type="button" data-render-filter="all" aria-pressed="true">All</button>
+        <button type="button" data-render-filter="interior" aria-pressed="false">Interior</button>
+        <button type="button" data-render-filter="exterior" aria-pressed="false">Exterior</button>
+      </div>
+    </div>
+    <p class="sr-only" data-render-status aria-live="polite">Loading render index.</p>
+    <div class="render-editorial-grid" data-visual-gallery data-render-grid data-view="one"></div>
+    <dialog class="visual-lightbox" aria-labelledby="visual-lightbox-title"><button class="visual-lightbox-close" type="button" aria-label="Close enlarged image">×</button><div class="visual-lightbox-layout"><div class="visual-lightbox-media"><img src="" alt=""></div><aside class="visual-lightbox-info"><h2 id="visual-lightbox-title"></h2><p></p><a class="visual-lightbox-project" href="#">View Project</a></aside></div></dialog>
+  </main>
+</body>
+</html>
